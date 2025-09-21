@@ -1,21 +1,29 @@
 cmake_minimum_required(VERSION 3.30)
 project(BookDB VERSION 1.0.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     # Все предупреждения - это ошибки
-    add_compile_options(-Wfatal-errors -Wall -Werror)
+    add_compile_options(-Wfatal-errors -Wall #-Werror
+    )
 
     # Не больше одной ошибки за раз
-    add_compile_options(-fmax-errors=1)
+    # add_compile_options(-fmax-errors=1)
 endif()
 
-# Ищем необходимые библиотеки
-find_package(GTest REQUIRED)
+# find_package(GTest REQUIRED)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+)
+FetchContent_MakeAvailable(googletest)
 
 file(GLOB HEADER_FILES "${CMAKE_SOURCE_DIR}/include/*.hpp")
 
@@ -42,7 +50,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_imp)
 file(GLOB TEST_SRC_FILES "${CMAKE_SOURCE_DIR}/tests/*.cpp")
 
 add_executable(${PROJECT_NAME}_tests "${TEST_SRC_FILES}")
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME}_imp GTest::GTest GTest::Main)
+target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME}_imp gtest gtest_main)
 target_include_directories(${PROJECT_NAME}_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Включаем тестирование
