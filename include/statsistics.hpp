@@ -57,8 +57,10 @@ double calculateAverageRating(const BookDatabase<T> &cont) {
         return 0.0;
     }
 
-    return std::accumulate(cont.cbegin(), cont.cend(), 0.0,
-                           [](double accum, const Book &book) { return accum + book.rating; }) /
+    return std::transform_reduce(cont.cbegin(), cont.cend(), 0.0, std::plus{}, 
+        [](const Book& book) { 
+            return book.rating;
+        }) /
            cont.size();
 }
 
